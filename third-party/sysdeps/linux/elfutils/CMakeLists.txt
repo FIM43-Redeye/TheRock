@@ -101,6 +101,12 @@ add_custom_target(
       # then escaped single quotes to make it to the linker command line.
       "LDFLAGS=${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath=\\'\\$$\\$$ORIGIN\\'"
       "CPPFLAGS=${EXTRA_CPPFLAGS}"
+      # Workaround for amd-llvm/clang's stricter pointer-discards-qualifiers
+      # enforcement on elfutils 0.192's libcpu/riscv_disasm.c:1259 bsearch.
+      # Covered by TheRock#5142 (elfutils 0.192->0.195 bump) which obsoletes
+      # this workaround upstream; tracked locally as TheRock#5120.
+      # -g -O2 preserves configure's default optimization/debug flags.
+      "CFLAGS=-g -O2 -Wno-error=incompatible-pointer-types-discards-qualifiers"
       --
     "${CMAKE_CURRENT_BINARY_DIR}/s/configure"
       --prefix "${CMAKE_INSTALL_PREFIX}"
