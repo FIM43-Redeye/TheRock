@@ -302,6 +302,11 @@ if(THEROCK_ENABLE_ROCPROFV3)
       CMAKE_ARGS
         -DHIP_PLATFORM=amd
         -DROCPROFSYS_BUILD_ELFUTILS=ON
+        # Override rocprofsys's vendored elfutils default (0.188, ~3 years old)
+        # with 0.195, the first release that fixes the libcpu/riscv_disasm.c:1259
+        # bsearch const-discard tripped under GCC 15 -Werror=discarded-qualifiers.
+        # Same root cause as TheRock#5120 (clang side, bundled 0.192).
+        -DElfUtils_DOWNLOAD_VERSION=0.195
         -DROCPROFSYS_BUILD_TBB=ON
         -DROCPROFSYS_BUILD_LIBIBERTY=ON
         -DROCPROFSYS_BUILD_BOOST=ON
